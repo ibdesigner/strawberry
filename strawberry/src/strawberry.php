@@ -2,44 +2,74 @@
 
 class Strawberry {
 
-    var $excerpt_length = 200;
-    var $thumb_size = 'medium';
-
     /**
-     * 
+     * Default custom excerpt length
+     * @var INT
+     */
+    private $excerpt_length = 200;
+    
+    /**
+     * Default thumb size
+     * @var STRING
+     */
+    private $thumb_size = 'medium';
+    
+    /**
+     *
+     * @var INT - default cache time in seconds can be overwritten by cache function 
+     */
+    private $cache_time = 300;
+    
+    /**
+     * TODO: Add WP_CACHE into the ecuation. Cache data only if IS DEFINED and set to TRUE
      * @param array $args - wordpress wp_query params
      * @return array
      */
     public function posts($args) {
-        $posts_q = new WP_Query($args);
 
-        if (!isset($args['thumb_size'])) {
-            $args['thumb_size'] = $this->thumb_size;
+        $cache_key = md5(serialize($args));
+
+        $strawberry_query = get_transient( $cache_key );
+
+        if ( false === $strawberry_query ) {
+
+            $posts_q = new WP_Query($args);
+
+            if (!isset($args['thumb_size'])) {
+                $args['thumb_size'] = $this->thumb_size;
+            }
+
+            if (!isset($args['excerpt_length'])) {
+                $args['excerpt_length'] = $this->excerpt_length;
+            }
+
+            $x = 0;
+            $arr = "";
+            while ($posts_q->have_posts()) : $posts_q->the_post();
+                $pid = get_the_ID();
+                $content = wpautop(get_the_content($pid));
+
+                $arr[$x]['title'] = get_the_title($pid);
+                $arr[$x]['content'] = $content;
+                $arr[$x]['excerpt'] = get_the_excerpt($pid);
+                $arr[$x]['content_excerpt'] = $this->strawberry_crop_text($args['excerpt_length'], $content);
+                $arr[$x]['images'] = $this->strawberry_images($pid);
+                $arr[$x]['thumb'] = $this->strawberry_thumb_src($pid, false);
+                $arr[$x]['permalink'] = get_permalink($pid);
+                $arr[$x]['meta'] = $this->strawberry_metas($pid);
+
+                $x++;
+            endwhile;
+
+            set_transient($cache_key, $arr, $this->cache_time);
         }
 
-        if (!isset($args['excerpt_length'])) {
-            $args['excerpt_length'] = $this->excerpt_length;
-        }
-
-        $x = 0;
-        $arr = "";
-        while ($posts_q->have_posts()) : $posts_q->the_post();
-            $pid = get_the_ID();
-            $content = wpautop(get_the_content($pid));
-            
-            $arr[$x]['title'] = get_the_title($pid);
-            $arr[$x]['content'] = $content;
-            $arr[$x]['excerpt'] = get_the_excerpt($pid);
-            $arr[$x]['content_excerpt'] = $this->strawberry_crop_text($args['excerpt_length'], $content);
-            $arr[$x]['images'] = $this->strawberry_images($pid);
-            $arr[$x]['thumb'] = $this->strawberry_thumb_src($pid, false);
-            $arr[$x]['permalink'] = get_permalink($pid);
-            $arr[$x]['meta'] = $this->strawberry_metas($pid);
-            
-            $x++;
-        endwhile;
-
-        return $arr;
+        return get_transient( $cache_key );
+    }
+    
+    public function cache($seconds){
+        $this->cache_time = $seconds;
+        return $this;
     }
 
     /**
