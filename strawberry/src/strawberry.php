@@ -7,7 +7,7 @@ class Strawberry {
 
     /**
      * 
-     * @param array $args
+     * @param array $args - wordpress wp_query params
      * @return array
      */
     public function posts($args) {
