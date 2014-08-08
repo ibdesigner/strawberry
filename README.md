@@ -11,10 +11,15 @@ A helper Class for Wordpress
 
 ## HOW TO USE
 
+put the file in your theme directory
+include it in functions.php file and add this:
+
 ```php
 $sb = new Strawberry();
 $posts = $sb->cache(300)->posts(array('category_name'=> 'Articles', 'posts_per_page' => 3));
 ```
+
+in your theme files add
 
 ```php
 foreach($posts as $post){
