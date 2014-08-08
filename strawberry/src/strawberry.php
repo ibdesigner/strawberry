@@ -39,7 +39,7 @@ class Strawberry {
         return $arr;
     }
 
-    /*
+    /**
      * @param: array - wordpress wp_query params
      * @return: single/first post from database
      */
@@ -99,6 +99,12 @@ class Strawberry {
         }
     }
 
+    /**
+     * 
+     * @param type $image_id
+     * @param type $size
+     * @return type
+     */
     private function get_image_data($image_id, $size) {
         $image_data = wp_get_attachment_image_src($image_id, $size);
         return array(
@@ -108,6 +114,11 @@ class Strawberry {
         );
     }
 
+    /**
+     * 
+     * @param type $pid
+     * @return type
+     */
     public function strawberry_thumb_src($pid) {
         $image_sizes = get_intermediate_image_sizes();
         foreach ($image_sizes as $size) {
@@ -117,6 +128,11 @@ class Strawberry {
         return $thumb;
     }
 
+    /**
+     * 
+     * @param type $pid
+     * @return type
+     */
     public function strawberry_metas($pid) {
         $metas = get_post_meta($pid);
         $x = 0;
