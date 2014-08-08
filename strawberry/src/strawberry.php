@@ -25,14 +25,17 @@ class Strawberry {
         $arr = "";
         while ($posts_q->have_posts()) : $posts_q->the_post();
             $pid = get_the_ID();
+            $content = wpautop(get_the_content($pid));
+            
             $arr[$x]['title'] = get_the_title($pid);
-            $arr[$x]['content'] = wpautop(get_the_content($pid));
+            $arr[$x]['content'] = $content;
             $arr[$x]['excerpt'] = get_the_excerpt($pid);
-            $arr[$x]['content_excerpt'] = $this->strawberry_crop_text($args['excerpt_length'], $arr[$x]['content']);
+            $arr[$x]['content_excerpt'] = $this->strawberry_crop_text($args['excerpt_length'], $content);
             $arr[$x]['images'] = $this->strawberry_images($pid);
             $arr[$x]['thumb'] = $this->strawberry_thumb_src($pid, false);
             $arr[$x]['permalink'] = get_permalink($pid);
             $arr[$x]['meta'] = $this->strawberry_metas($pid);
+            
             $x++;
         endwhile;
 
