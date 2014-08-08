@@ -1,11 +1,16 @@
 <?php
 
 class Strawberry {
-    
+
     var $excerpt_length = 200;
     var $thumb_size = 'medium';
-    
-    public function posts($args){
+
+    /**
+     * 
+     * @param array $args
+     * @return array
+     */
+    public function posts($args) {
         $posts_q = new WP_Query($args);
 
         if (!isset($args['thumb_size'])) {
@@ -19,26 +24,35 @@ class Strawberry {
         $x = 0;
         $arr = "";
         while ($posts_q->have_posts()) : $posts_q->the_post();
-            $post_id = get_the_ID();
-            $arr[$x]['title'] = get_the_title($post_id);
-            $arr[$x]['content'] = wpautop(get_the_content($post_id));
-            $arr[$x]['excerpt'] = get_the_excerpt($post_id);
+            $pid = get_the_ID();
+            $arr[$x]['title'] = get_the_title($pid);
+            $arr[$x]['content'] = wpautop(get_the_content($pid));
+            $arr[$x]['excerpt'] = get_the_excerpt($pid);
             $arr[$x]['content_excerpt'] = $this->strawberry_crop_text($args['excerpt_length'], $arr[$x]['content']);
-            $arr[$x]['images'] = $this->strawberry_images($post_id);
-            $arr[$x]['thumb'] = $this->strawberry_thumb_src($post_id, false);
-            $arr[$x]['permalink'] = get_permalink($post_id);
-            $arr[$x]['meta'] = $this->strawberry_metas($post_id);
+            $arr[$x]['images'] = $this->strawberry_images($pid);
+            $arr[$x]['thumb'] = $this->strawberry_thumb_src($pid, false);
+            $arr[$x]['permalink'] = get_permalink($pid);
+            $arr[$x]['meta'] = $this->strawberry_metas($pid);
             $x++;
         endwhile;
-    
+
         return $arr;
     }
-    
-    public function single($args){
+
+    /*
+     * @param: array - wordpress wp_query params
+     * @return: single/first post from database
+     */
+    public function single($args) {
         $posts = $this->posts($args);
         return $posts[0];
     }
-    
+
+    /**
+     * Extracts a portion of text
+     * @param: $length of text, text
+     * @return: cropped text from begining
+     */
     private function strawberry_crop_text($length, $excerpt) {
         $excerpt = preg_replace(" (\[.*?\])", '', $excerpt);
         $excerpt = strip_shortcodes($excerpt);
@@ -49,11 +63,16 @@ class Strawberry {
 
         return $excerpt;
     }
-    
-    private function strawberry_images( $post_id ) {
+
+    /**
+     * Extracts children images (post_type = attachment) for selected post
+     * @param: $pid (int)
+     * @retun: array|false Returns all images as array of arrays with thumb names as keys in second array
+     */
+    private function strawberry_images($pid) {
         $photos = get_children(
                 array(
-                    'post_parent' => $post_id,
+                    'post_parent' => $pid,
                     'post_status' => 'inherit',
                     'post_type' => 'attachment',
                     'post_mime_type' => 'image',
@@ -66,54 +85,54 @@ class Strawberry {
 
         if ($photos) {
             $x = 0;
-            foreach ( $photos as $photo ) {
-            
-                foreach( $image_sizes as $size ) {
+            foreach ($photos as $photo) {
+
+                foreach ($image_sizes as $size) {
                     $thumb_data = $this->get_image_data($photo->ID, $size);
                     $results[$x][$size] = $thumb_data;
                 }
                 $x++;
-                
             }
+            return $results;
+        } else {
+            return false;
         }
-        return $results;
     }
-    
-    private function get_image_data($image_id, $size){
+
+    private function get_image_data($image_id, $size) {
         $image_data = wp_get_attachment_image_src($image_id, $size);
         return array(
-                        'src' => $image_data[0],
-                        'width' => $image_data[1],
-                        'height' => $image_data[2]
-                    );
+            'src' => $image_data[0],
+            'width' => $image_data[1],
+            'height' => $image_data[2]
+        );
     }
-    
-    public function strawberry_thumb_src ( $post_id ) {
+
+    public function strawberry_thumb_src($pid) {
         $image_sizes = get_intermediate_image_sizes();
-        foreach($image_sizes as $size){
-            $thumb[$size] = $this->get_image_data(get_post_thumbnail_id($post_id), $size, false, '');       
+        foreach ($image_sizes as $size) {
+            $thumb[$size] = $this->get_image_data(get_post_thumbnail_id($pid), $size, false, '');
         }
-        
+
         return $thumb;
     }
-    
-    
-    public function strawberry_metas($post_id) {
-        $metas = get_post_meta($post_id);
-        $x=0;
-        
-        foreach($metas as $key => $meta){
-            if( count($meta) == 1 ){
+
+    public function strawberry_metas($pid) {
+        $metas = get_post_meta($pid);
+        $x = 0;
+
+        foreach ($metas as $key => $meta) {
+            if (count($meta) == 1) {
                 $m[$key] = $meta[0];
             } else {
                 $m[$key] = $meta;
             }
             $x++;
         }
-        
+
         return $m;
     }
-    
+
 }
 
 ?>
