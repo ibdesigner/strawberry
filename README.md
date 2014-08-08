@@ -11,11 +11,10 @@ A helper Class for Wordpress
 
 ## HOW TO USE
 
-`$sb = new Strawberry();
-$posts = $sb->cache(300)->posts(array('category_name'=> 'Articles', 'posts_per_page' => 3));`
+```$sb = new Strawberry();
+$posts = $sb->cache(300)->posts(array('category_name'=> 'Articles', 'posts_per_page' => 3));```
 
-`
-foreach($posts as $post){
+```foreach($posts as $post){
     echo $post["title"]; // post title
     echo $post["excerpt"]; // wordpress generated excerpt
     echo $post["content_excerpt"]; // content striped excerpt
@@ -26,5 +25,4 @@ foreach($posts as $post){
     foreach($post['images'] as $image){
         echo $image['some_thumb_size_name']['src'];
     }
-}
-`
+}```
