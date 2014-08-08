@@ -4,17 +4,17 @@ strawberry
 A helper Class for Wordpress
 
 
-TO DO
-- enable/disable cache based on WP_CACHE
-- return post taxonomy based on arguments passed
-- convert to static methods
+## TO DO
+* enable/disable cache based on WP_CACHE
+* return post taxonomy based on arguments passed
+* convert to static methods
 
-HOW TO USE
+## HOW TO USE
 
-$sb = new Strawberry();
-$posts = $sb->cache(300)->posts(array('category_name'=> 'Articles', 'posts_per_page' => 3));
+`$sb = new Strawberry();
+$posts = $sb->cache(300)->posts(array('category_name'=> 'Articles', 'posts_per_page' => 3));`
 
-// 
+`
 foreach($posts as $post){
     echo $post["title"]; // post title
     echo $post["excerpt"]; // wordpress generated excerpt
@@ -27,3 +27,4 @@ foreach($posts as $post){
         echo $image['some_thumb_size_name']['src'];
     }
 }
+`
