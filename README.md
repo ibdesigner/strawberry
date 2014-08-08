@@ -14,6 +14,7 @@ HOW TO USE
 $sb = new Strawberry();
 $posts = $sb->cache(300)->posts(array('category_name'=> 'Articles', 'posts_per_page' => 3));
 
+// 
 foreach($posts as $post){
     echo $post["title"]; // post title
     echo $post["excerpt"]; // wordpress generated excerpt
