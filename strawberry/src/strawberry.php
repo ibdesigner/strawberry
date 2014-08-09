@@ -6,7 +6,7 @@ class Strawberry {
      * Default custom excerpt length
      * @var INT
      */
-    private $excerpt_length = 200;
+    private static $excerpt_length = 200;
     
     /**
      * Default thumb size
