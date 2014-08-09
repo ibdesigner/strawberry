@@ -7,40 +7,40 @@ class Strawberry {
      * @var INT
      */
     private static $excerpt_length = 200;
-    
+
     /**
      * Default thumb size
      * @var STRING
      */
-    private $thumb_size = 'medium';
-    
+    private static $thumb_size = 'medium';
+
     /**
      *
      * @var INT - default cache time in seconds can be overwritten by cache function 
      */
-    private $cache_time = 300;
-    
+    private static $cache_time = 300;
+
     /**
      * TODO: Add WP_CACHE into the ecuation. Cache data only if IS DEFINED and set to TRUE
      * @param array $args - wordpress wp_query params
      * @return array
      */
-    public function posts($args) {
+    public static function posts($args) {
 
         $cache_key = md5(serialize($args));
 
-        $strawberry_query = get_transient( $cache_key );
+        $strawberry_query = get_transient($cache_key);
 
-        if ( false === $strawberry_query ) {
+        if (false === $strawberry_query) {
 
             $posts_q = new WP_Query($args);
 
             if (!isset($args['thumb_size'])) {
-                $args['thumb_size'] = $this->thumb_size;
+                $args['thumb_size'] = self::$thumb_size;
             }
 
             if (!isset($args['excerpt_length'])) {
-                $args['excerpt_length'] = $this->excerpt_length;
+                $args['excerpt_length'] = self::$excerpt_length;
             }
 
             $x = 0;
@@ -52,23 +52,27 @@ class Strawberry {
                 $arr[$x]['title'] = get_the_title($pid);
                 $arr[$x]['content'] = $content;
                 $arr[$x]['excerpt'] = get_the_excerpt($pid);
-                $arr[$x]['content_excerpt'] = $this->strawberry_crop_text($args['excerpt_length'], $content);
-                $arr[$x]['images'] = $this->strawberry_images($pid);
-                $arr[$x]['thumb'] = $this->strawberry_thumb_src($pid, false);
+                $arr[$x]['content_excerpt'] = self::strawberry_crop_text($args['excerpt_length'], $content);
+                $arr[$x]['images'] = self::strawberry_images($pid);
+                $arr[$x]['thumb'] = self::strawberry_thumb_src($pid, false);
                 $arr[$x]['permalink'] = get_permalink($pid);
-                $arr[$x]['meta'] = $this->strawberry_metas($pid);
+                $arr[$x]['meta'] = self::strawberry_metas($pid);
+                
+                if(isset($args['taxonomy']) && $args['taxonomy'] === true){
+                    $arr[$x]['taxonomy'] = self::post_taxonomies($pid);
+                }
 
                 $x++;
             endwhile;
 
-            set_transient($cache_key, $arr, $this->cache_time);
+            set_transient($cache_key, $arr, self::$cache_time);
         }
 
-        return get_transient( $cache_key );
+        return get_transient($cache_key);
     }
-    
-    public function cache($seconds){
-        $this->cache_time = $seconds;
+
+    public static function cache($seconds) {
+        self::$cache_time = $seconds;
         return $this;
     }
 
@@ -76,8 +80,8 @@ class Strawberry {
      * @param: array - wordpress wp_query params
      * @return: single/first post from database
      */
-    public function single($args) {
-        $posts = $this->posts($args);
+    public static function single($args) {
+        $posts = self::posts($args);
         return $posts[0];
     }
 
@@ -121,7 +125,7 @@ class Strawberry {
             foreach ($photos as $photo) {
 
                 foreach ($image_sizes as $size) {
-                    $thumb_data = $this->get_image_data($photo->ID, $size);
+                    $thumb_data = self::get_image_data($photo->ID, $size);
                     $results[$x][$size] = $thumb_data;
                 }
                 $x++;
@@ -152,10 +156,10 @@ class Strawberry {
      * @param type $pid
      * @return type
      */
-    public function strawberry_thumb_src($pid) {
+    public static function strawberry_thumb_src($pid) {
         $image_sizes = get_intermediate_image_sizes();
         foreach ($image_sizes as $size) {
-            $thumb[$size] = $this->get_image_data(get_post_thumbnail_id($pid), $size, false, '');
+            $thumb[$size] = self::get_image_data(get_post_thumbnail_id($pid), $size, false, '');
         }
 
         return $thumb;
@@ -166,7 +170,7 @@ class Strawberry {
      * @param type $pid
      * @return type
      */
-    public function strawberry_metas($pid) {
+    public static function strawberry_metas($pid) {
         $metas = get_post_meta($pid);
         $x = 0;
 
@@ -180,6 +184,49 @@ class Strawberry {
         }
 
         return $m;
+    }
+    
+    /**
+     * 
+     * @param INT $pid
+     * @return ARRAY
+     */
+    private static function post_taxonomies($pid){
+        $taxonomies = self::public_taxonomies();
+        
+        foreach($taxonomies as $taxonomy){
+            $post_terms = get_terms($taxonomy);
+            $x=0;
+            $post_terms_array = array();
+            foreach($post_terms as $post_term){
+                $post_terms_array[$x]['term_id'] = $post_term->term_id;
+                $post_terms_array[$x]['name'] = $post_term->name;
+                $post_terms_array[$x]['url'] =  get_term_link($post_term);              
+                $x++;
+            }
+            
+            $terms[$taxonomy] = $post_terms_array;
+        }
+        
+        return $terms;
+    }
+
+    /**
+     * 
+     * @return ARRAY
+     */
+    private static function public_taxonomies() {
+        $args = array(
+            'public' => true,
+        );
+        $taxonomies = get_taxonomies($args, 'names', 'and');
+        if ($taxonomies) {
+            foreach ($taxonomies as $taxonomy) {
+                $tax_list[] = $taxonomy;
+            }
+        }
+
+        return $tax_list;
     }
 
 }
