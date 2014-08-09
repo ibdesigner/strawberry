@@ -59,7 +59,7 @@ class Strawberry {
                 $arr[$x]['meta'] = self::strawberry_metas($pid);
                 
                 if(isset($args['taxonomy']) && $args['taxonomy'] === true){
-                    $arr[$x]['taxonomy'] = self::post_taxonomies($pid);
+                    $arr[$x]['terms'] = self::terms($pid);
                 }
 
                 $x++;
@@ -106,7 +106,7 @@ class Strawberry {
      * @param: $pid (int)
      * @retun: array|false Returns all images as array of arrays with thumb names as keys in second array
      */
-    private function strawberry_images($pid) {
+    public function strawberry_images($pid) {
         $photos = get_children(
                 array(
                     'post_parent' => $pid,
@@ -191,7 +191,7 @@ class Strawberry {
      * @param INT $pid
      * @return ARRAY
      */
-    private static function post_taxonomies($pid){
+    public static function terms($pid){
         $taxonomies = self::public_taxonomies();
         
         foreach($taxonomies as $taxonomy){

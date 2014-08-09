@@ -7,7 +7,6 @@ A helper Class for Wordpress
 ## TO DO
 * enable/disable cache based on WP_CACHE
 * return post taxonomy based on arguments passed
-* convert to static methods
 
 ## HOW TO USE
 
@@ -15,8 +14,7 @@ put the file in your theme directory
 include it in functions.php file and add this:
 
 ```php
-$sb = new Strawberry();
-$posts = $sb->cache(300)->posts(array('category_name'=> 'Articles', 'posts_per_page' => 3));
+$posts = Strawberry::cache(300)->posts(array('category_name'=> 'Articles', 'posts_per_page' => 3));
 ```
 
 in your theme files add
