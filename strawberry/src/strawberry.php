@@ -195,7 +195,7 @@ class Strawberry {
         $taxonomies = self::public_taxonomies();
         
         foreach($taxonomies as $taxonomy){
-            $post_terms = get_terms($taxonomy);
+            $post_terms = wp_get_post_terms($pid, $taxonomy);
             $x=0;
             $post_terms_array = array();
             foreach($post_terms as $post_term){
