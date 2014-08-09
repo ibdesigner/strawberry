@@ -49,14 +49,14 @@ class Strawberry {
                 $pid = get_the_ID();
                 $content = wpautop(get_the_content($pid));
 
-                $arr[$x]['title'] = get_the_title($pid);
-                $arr[$x]['content'] = $content;
-                $arr[$x]['excerpt'] = get_the_excerpt($pid);
-                $arr[$x]['content_excerpt'] = self::strawberry_crop_text($args['excerpt_length'], $content);
-                $arr[$x]['images'] = self::strawberry_images($pid);
-                $arr[$x]['thumb'] = self::strawberry_thumb_src($pid, false);
-                $arr[$x]['permalink'] = get_permalink($pid);
-                $arr[$x]['meta'] = self::strawberry_metas($pid);
+                $arr[$x]['title']       = get_the_title($pid);
+                $arr[$x]['content']     = $content;
+                $arr[$x]['excerpt']     = get_the_excerpt($pid);
+                $arr[$x]['content_excerpt'] = self::crop_text($args['excerpt_length'], $content);
+                $arr[$x]['images']      = self::images($pid);
+                $arr[$x]['thumb']       = self::feature_image($pid, false);
+                $arr[$x]['permalink']   = get_permalink($pid);
+                $arr[$x]['meta']        = self::metas($pid);
                 
                 if(isset($args['taxonomy']) && $args['taxonomy'] === true){
                     $arr[$x]['terms'] = self::terms($pid);
@@ -90,7 +90,7 @@ class Strawberry {
      * @param: $length of text, text
      * @return: cropped text from begining
      */
-    private function strawberry_crop_text($length, $excerpt) {
+    private function crop_text($length, $excerpt) {
         $excerpt = preg_replace(" (\[.*?\])", '', $excerpt);
         $excerpt = strip_shortcodes($excerpt);
         $excerpt = strip_tags($excerpt);
@@ -106,7 +106,7 @@ class Strawberry {
      * @param: $pid (int)
      * @retun: array|false Returns all images as array of arrays with thumb names as keys in second array
      */
-    public function strawberry_images($pid) {
+    public function images($pid) {
         $photos = get_children(
                 array(
                     'post_parent' => $pid,
@@ -156,7 +156,7 @@ class Strawberry {
      * @param type $pid
      * @return type
      */
-    public static function strawberry_thumb_src($pid) {
+    public static function feature_image($pid) {
         $image_sizes = get_intermediate_image_sizes();
         foreach ($image_sizes as $size) {
             $thumb[$size] = self::get_image_data(get_post_thumbnail_id($pid), $size, false, '');
@@ -170,7 +170,7 @@ class Strawberry {
      * @param type $pid
      * @return type
      */
-    public static function strawberry_metas($pid) {
+    public static function metas($pid) {
         $metas = get_post_meta($pid);
         $x = 0;
 
