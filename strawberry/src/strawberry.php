@@ -51,7 +51,7 @@ class Strawberry {
 
                 $arr[$x]['title']       = get_the_title($pid);
                 $arr[$x]['content']     = $content;
-                $arr[$x]['excerpt']     = get_the_excerpt($pid);
+                $arr[$x]['excerpt']     = get_the_excerpt();
                 $arr[$x]['content_excerpt'] = self::crop_text($args['excerpt_length'], $content);
                 $arr[$x]['images']      = self::images($pid);
                 $arr[$x]['thumb']       = self::feature_image($pid, false);
