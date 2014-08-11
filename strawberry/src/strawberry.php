@@ -57,7 +57,7 @@ class Strawberry {
                 $arr[$x]['thumb']       = self::feature_image($pid, false);
                 $arr[$x]['permalink']   = get_permalink($pid);
                 $arr[$x]['meta']        = self::metas($pid);
-                $arr[$x]['author']      = array( 'name' => get_the_author(), 'link' => get_the_author_link() );
+                $arr[$x]['author']      = array( 'name' => get_the_author(), 'permalink' => get_the_author_link() );
                 $arr[$x]['date']        = strtotime(get_the_date('Y-m-d H:i:s'));
                 
                 if(isset($args['taxonomy']) && $args['taxonomy'] === true){
