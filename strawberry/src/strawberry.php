@@ -57,6 +57,7 @@ class Strawberry {
                 $arr[$x]['thumb']       = self::feature_image($pid, false);
                 $arr[$x]['permalink']   = get_permalink($pid);
                 $arr[$x]['meta']        = self::metas($pid);
+                $arr[$x]['date']        = get_the_date('d/m/Y');
                 
                 if(isset($args['taxonomy']) && $args['taxonomy'] === true){
                     $arr[$x]['terms'] = self::terms($pid);
