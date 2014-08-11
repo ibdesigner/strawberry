@@ -65,7 +65,7 @@ class Strawberry {
 
                 $x++;
             endwhile;
-
+            wp_reset_postdata(); 
             set_transient($cache_key, $arr, self::$cache_time);
         }
 
