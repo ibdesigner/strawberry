@@ -74,7 +74,7 @@ class Strawberry {
 
     public static function cache($seconds) {
         self::$cache_time = $seconds;
-        return $this;
+        return new self();
     }
 
     /**
