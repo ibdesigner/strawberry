@@ -174,7 +174,7 @@ class Strawberry_posts_widget extends WP_Widget {
                     $simple_file = basename($file, '.php');
                     $file_name = ucwords(str_replace("_", " ", $simple_file));
                     ?>
-                        <option <?php selected($instance["template"], $simple_file); ?> value="<?php echo $simple_file; ?>"><?php echo $file_name; ?></option>
+                        <option <?php selected(isset($instance['template']) ? $instance['template'] : "", $simple_file); ?> value="<?php echo $simple_file; ?>"><?php echo $file_name; ?></option>
                     <?php } ?>
                 </select>
             </label>
@@ -193,7 +193,7 @@ class Strawberry_posts_widget extends WP_Widget {
                     <?php $image_sizes = get_intermediate_image_sizes(); ?>
                     <select class="widefat" id='<?php echo $this->get_field_id("thumbnail"); ?>' name="<?php echo $this->get_field_name("thumbnail"); ?>">
                     <?php foreach ($image_sizes as $size_name): ?>
-                            <option <?php selected($instance["thumbnail"], $size_name); ?> value="<?php echo $size_name ?>"><?php echo $size_name ?></option>
+                            <option <?php selected( isset($instance['thumbnail']) ? $instance['thumbnail'] : "", $size_name); ?> value="<?php echo $size_name ?>"><?php echo $size_name ?></option>
                     <?php endforeach; ?>
                     </select>
                 </label>
