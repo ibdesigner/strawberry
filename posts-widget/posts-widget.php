@@ -17,12 +17,19 @@ class Strawberry_posts_widget extends WP_Widget {
     }
 
     public function widget($args, $instance) {
+        if(defined('DEBUG_WIDGETS') && DEBUG_WIDGETS === true){
+            $time = explode(' ', microtime());
+            $start = $time[1] + $time[0];
+        }
         $widget_key = "widget-" . str_replace(' ', '-', strtolower($instance['title']));
-
+    
         $strawberry_widget_cache = get_transient($widget_key);
 
         if (false === $strawberry_widget_cache) {
-
+            if (!isset($instance['cache_time']) || $instance['cache_time'] == "") {
+                $instance['cache_time'] = 300;
+            }
+            
             $title = apply_filters('widget_title', $instance['title']);
 
             $valid_sort_orders = array('date', 'title', 'comment_count', 'rand');
@@ -51,7 +58,7 @@ class Strawberry_posts_widget extends WP_Widget {
             $query_args['order_by'] = $sort_by;
             $query_args['post_type'] = $instance["post_type"];
 
-            $posts = Strawberry::cache(1)->posts($query_args);
+            $posts = Strawberry::cache($instance['cache_time'])->posts($query_args);
 
             $params = array(
                 'posts' => $posts,
@@ -65,16 +72,18 @@ class Strawberry_posts_widget extends WP_Widget {
 
             $output .= $this->fetch_template($instance['template'], $params);
 
-            $output .= $args['after_widget'];
-            
-            if (!isset($instance['cache_time']) || $instance['cache_time'] == "") {
-                $instance['cache_time'] = 300;
-            }
+            $output .= $args['after_widget'];                       
 
             set_transient($widget_key, $output, $instance['cache_time']);
         }
         
         echo get_transient($widget_key);
+        if(defined('DEBUG_WIDGETS') && DEBUG_WIDGETS === true){
+            $time = explode(' ', microtime());
+            $finish  = $time[1] + $time[0];
+            $total_time = round(($finish - $start), 4);
+            echo '<div class="alert alert-info">Widget generated in '.$total_time.' seconds.</div>';
+        }
     }
 
     function form($instance) {
