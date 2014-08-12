@@ -6,30 +6,26 @@ if (!class_exists('Strawberry')) {
 class Strawberry_posts_widget extends WP_Widget {
 
     private $template_dir;
-    private $widget_key;
 
-    public function __construct($id_base = false) {
+    public function __construct() {
 
         $this->template_dir = dirname(__FILE__) . "/templates/";
 
         parent::__construct(
                 'strawberry_posts_wigdet', __('Taxonomy Posts Widget', 'strawberry'), array('description' => __('Listing posts from selected Taxonomies', 'text_domain'),)
         );
-        
-        $this->widget_key = "widget-" . $this->id;
-        
-        if($this->updated === true){
-            delete_transient($this->widget_key);
-        }
+
     }
 
     public function widget($args, $instance) {
-        if(defined('DEBUG_WIDGETS') && DEBUG_WIDGETS === true){
+        if(defined('WP_DEBUG') && WP_DEBUG === true){
             $time = explode(' ', microtime());
             $start = $time[1] + $time[0];
-        }                      
-    
-        $strawberry_widget_cache = get_transient($this->widget_key);
+        }   
+
+        $widget_key = "widget-" . $this->id;
+
+        $strawberry_widget_cache = get_transient($widget_key);
 
         if (false === $strawberry_widget_cache) {
             if (!isset($instance['cache_time']) || $instance['cache_time'] == "") {
@@ -84,11 +80,11 @@ class Strawberry_posts_widget extends WP_Widget {
 
             $output .= $args['after_widget'];                       
 
-            set_transient($this->widget_key, $output, $instance['cache_time']);
+            set_transient($widget_key, $output, $instance['cache_time']);
         }
         
-        echo get_transient($this->widget_key);
-        if(defined('DEBUG_WIDGETS') && DEBUG_WIDGETS === true){
+        echo get_transient($widget_key);
+        if(defined('WP_DEBUG') && WP_DEBUG === true){
             $time = explode(' ', microtime());
             $finish  = $time[1] + $time[0];
             $total_time = round(($finish - $start), 4);
@@ -98,7 +94,9 @@ class Strawberry_posts_widget extends WP_Widget {
 
     function form($instance) {
 
-    
+        if($this->updated === true){
+            delete_transient("widget-" . $this->id);
+        }    
         ?>
         <p>
             <label for="<?php echo $this->get_field_id("title"); ?>">
