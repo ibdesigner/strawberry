@@ -38,13 +38,13 @@ class Strawberry_posts_widget extends WP_Widget {
                 $instance['template'] = 'default';
             }
 
-            $query_args['posts_per_page'] = (int) $instance["num"];
+            $query_args['posts_per_page'] = (int)$instance["num"];
             if (isset($instance["cat"]) && $instance["cat"] > 0) {
-                $query_args['cat'] = (int) $instance["cat"];
+                $query_args['cat'] = (int)$instance["cat"];
             }
 
             if (isset($instance["excerpt_length"]) && $instance["excerpt_length"] > 0) {
-                $query_args['excerpt_length'] = (int) $instance["excerpt_length"];
+                $query_args['excerpt_length'] = (int)$instance["excerpt_length"];
             }
 
             $query_args['order'] = $sort_order;
@@ -66,18 +66,20 @@ class Strawberry_posts_widget extends WP_Widget {
             $output .= $this->fetch_template($instance['template'], $params);
 
             $output .= $args['after_widget'];
-
+            
             if (!isset($instance['cache_time']) || $instance['cache_time'] == "") {
                 $instance['cache_time'] = 300;
             }
 
             set_transient($widget_key, $output, $instance['cache_time']);
         }
-
+        
         echo get_transient($widget_key);
     }
 
     function form($instance) {
+
+    
         ?>
         <p>
             <label for="<?php echo $this->get_field_id("title"); ?>">
@@ -88,17 +90,17 @@ class Strawberry_posts_widget extends WP_Widget {
         <p>
             <label>
         <?php _e('Category', 'strawberry'); ?>:
-                <?php wp_dropdown_categories(array('show_option_all' => 'Toate categoriile', 'class' => "widefat", 'name' => $this->get_field_name("cat"), 'selected' => isset($instance['cat']) ? $instance['cat'] : "")); ?>
+        <?php wp_dropdown_categories(array('show_option_all' => 'Toate categoriile', 'class' => "widefat", 'name' => $this->get_field_name("cat"), 'selected' => isset($instance['cat']) ? $instance['cat'] : "")); ?>
             </label>
         </p>
         <p>
             <label>
-        <?php _e('Post type', 'strawberry'); ?>:
-                <?php $post_types = get_post_types(array('public' => true), 'names'); ?> 
+                <?php _e('Post type', 'strawberry'); ?>:
+        <?php $post_types = get_post_types(array('public' => true), 'names'); ?> 
                 <select class="widefat" id="<?php echo $this->get_field_id("post_type"); ?>"  name='<?php echo $this->get_field_name("post_type"); ?>'>
-                <?php foreach ($post_types as $post_type) { ?>
+        <?php foreach ($post_types as $post_type) { ?>
                         <option <?php selected(isset($instance['post_type']) ? $instance['post_type'] : "", $post_type); ?> value="<?php echo $post_type; ?>"><?php echo $post_type; ?></option>
-                    <?php } ?>
+                <?php } ?>
                 </select>
             </label>
         </p>
@@ -111,7 +113,7 @@ class Strawberry_posts_widget extends WP_Widget {
         <p>
             <label for="<?php echo $this->get_field_id("sort_by"); ?>">
         <?php _e('Sort by', 'strawberry'); ?>:
-                <?php $sort_by = isset($instance['sort_by']) ? $instance['sort_by'] : "" ?>
+        <?php $sort_by = isset($instance['sort_by']) ? $instance['sort_by'] : "" ?>
                 <select class="widefat" id="<?php echo $this->get_field_id("sort_by"); ?>" name="<?php echo $this->get_field_name("sort_by"); ?>">
                     <option value="date"<?php selected($sort_by, "date"); ?>>Date</option>
                     <option value="title"<?php selected($sort_by, "title"); ?>>Title</option>
@@ -125,27 +127,27 @@ class Strawberry_posts_widget extends WP_Widget {
                 <input type="checkbox" class="checkbox" 
                        id="<?php echo $this->get_field_id("asc_sort_order"); ?>" 
                        name="<?php echo $this->get_field_name("asc_sort_order"); ?>"
-        <?php checked((bool) isset($instance['asc_sort_order']) ? $instance['asc_sort_order'] : "", true); ?> />
-                       <?php _e('Reverse sort order (ascending)', 'strawberry'); ?>
+        <?php checked( isset($instance['asc_sort_order']) ? (bool)$instance['asc_sort_order'] : false, true); ?> />
+        <?php _e('Reverse sort order (ascending)', 'strawberry'); ?>
             </label>
         </p>
 
         <p>
             <label for="<?php echo $this->get_field_id("excerpt"); ?>">
-                <input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("excerpt"); ?>" name="<?php echo $this->get_field_name("excerpt"); ?>"<?php checked((bool) isset($instance['excerpt']) ? $instance['excerpt'] : "", true); ?> />
+                <input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("excerpt"); ?>" name="<?php echo $this->get_field_name("excerpt"); ?>"<?php checked( isset($instance['excerpt']) ? (bool)$instance['excerpt'] : false, true); ?> />
         <?php _e('Show post excerpt', 'strawberry'); ?>
             </label>
         </p>
         <p>
             <label for="<?php echo $this->get_field_id("excerpt_length"); ?>">
-        <?php _e('Excerpt length (in letters):', 'strawberry'); ?>
+                <?php _e('Excerpt length (in letters):', 'strawberry'); ?>
             </label>
             <input class="widefat" type="text" id="<?php echo $this->get_field_id("excerpt_length"); ?>" name="<?php echo $this->get_field_name("excerpt_length"); ?>" value="<?php echo isset($instance['excerpt_length']) ? $instance['excerpt_length'] : ""; ?>" size="3" />
         </p>        
 
         <p>
             <label for="<?php echo $this->get_field_id("date"); ?>">
-                <input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("date"); ?>" name="<?php echo $this->get_field_name("date"); ?>"<?php checked((bool) isset($instance['date']) ? $instance['date'] : "", true); ?> />
+                <input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("date"); ?>" name="<?php echo $this->get_field_name("date"); ?>"<?php checked(isset($instance['date']) ? (bool)$instance['date'] : false, true); ?> />
         <?php _e('Show post date', 'strawberry'); ?>
             </label>
         </p>
@@ -154,9 +156,9 @@ class Strawberry_posts_widget extends WP_Widget {
         <p>
             <label>
         <?php _e('Select a template', 'strawberry'); ?>:<br />
-                <?php
-                $files = array_diff(scandir($this->template_dir), array('..', '.'));
-                ?> 
+        <?php
+        $files = array_diff(scandir($this->template_dir), array('..', '.'));
+        ?> 
                 <select class="widefat" id="<?php echo $this->get_field_id("template"); ?>"  name='<?php echo $this->get_field_name("template"); ?>'>
                 <?php
                 foreach ($files as $file) {
@@ -169,29 +171,29 @@ class Strawberry_posts_widget extends WP_Widget {
             </label>
         </p>
 
-        <?php if (function_exists('the_post_thumbnail') && current_theme_supports("post-thumbnails")) : ?>
+                    <?php if (function_exists('the_post_thumbnail') && current_theme_supports("post-thumbnails")) : ?>
             <p>
                 <label for="<?php echo $this->get_field_id("thumb"); ?>">
-                    <input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("thumb"); ?>" name="<?php echo $this->get_field_name("thumb"); ?>"<?php checked((bool) isset($instance['thumb']) ? $instance['thumb'] : "", true); ?> />
+                    <input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("thumb"); ?>" name="<?php echo $this->get_field_name("thumb"); ?>"<?php checked(isset($instance['thumb']) ? (bool)$instance['thumb'] : false, true); ?> />
             <?php _e('Show post thumbnail', 'strawberry'); ?>
                 </label>
             </p>
             <p>
                 <label>
-            <?php _e('Thumbnail', 'strawberry'); ?>:<br />
+                    <?php _e('Thumbnail', 'strawberry'); ?>:<br />
                     <?php $image_sizes = get_intermediate_image_sizes(); ?>
                     <select class="widefat" id='<?php echo $this->get_field_id("thumbnail"); ?>' name="<?php echo $this->get_field_name("thumbnail"); ?>">
                     <?php foreach ($image_sizes as $size_name): ?>
                             <option <?php selected($instance["thumbnail"], $size_name); ?> value="<?php echo $size_name ?>"><?php echo $size_name ?></option>
-                        <?php endforeach; ?>
+                    <?php endforeach; ?>
                     </select>
                 </label>
             </p>
-
+      
             <p>
                 <label for="<?php echo $this->get_field_id("cache_time"); ?>">
-            <?php _e('Cache time (seconds)', 'strawberry'); ?>:<br />
-                    <input class="widefat" type="text" id="<?php echo $this->get_field_id("cache_time"); ?>" name="<?php echo $this->get_field_name("cache_time"); ?>" value="<?php echo isset($instance['cache_time']) ? $instance['cache_time'] : ""; ?>" />
+                <?php _e('Cache time (seconds)', 'strawberry'); ?>:<br />
+                        <input class="widefat" type="text" id="<?php echo $this->get_field_id("cache_time"); ?>" name="<?php echo $this->get_field_name("cache_time"); ?>" value="<?php echo isset($instance['cache_time']) ? $instance['cache_time'] : ""; ?>" />
                 </label>
             </p>
         <?php endif; ?>
