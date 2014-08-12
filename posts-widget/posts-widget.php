@@ -49,6 +49,10 @@ class Strawberry_posts_widget extends WP_Widget {
             if (isset($instance["cat"]) && $instance["cat"] > 0) {
                 $query_args['cat'] = (int)$instance["cat"];
             }
+            
+            if (isset($instance["offset"]) && $instance["offset"] > 0) {
+                $query_args['offset'] = (int)$instance["offset"];
+            }
 
             if (isset($instance["excerpt_length"]) && $instance["excerpt_length"] > 0) {
                 $query_args['excerpt_length'] = (int)$instance["excerpt_length"];
@@ -117,6 +121,12 @@ class Strawberry_posts_widget extends WP_Widget {
             <label for="<?php echo $this->get_field_id("num"); ?>">
         <?php _e('Number of posts to show', 'strawberry'); ?>:
                 <input  class="widefat" id="<?php echo $this->get_field_id("num"); ?>" name="<?php echo $this->get_field_name("num"); ?>" type="text" value="<?php echo absint(isset($instance['num']) ? $instance['num'] : ""); ?>" size='3' />
+            </label>
+        </p>
+        <p>
+            <label for="<?php echo $this->get_field_id("offset"); ?>">
+                <?php _e('Step over x posts', 'strawberry'); ?>:
+                <input  class="widefat" id="<?php echo $this->get_field_id("offset"); ?>" name="<?php echo $this->get_field_name("offset"); ?>" type="text" value="<?php echo absint(isset($instance['offset']) ? $instance['offset'] : ""); ?>" size='3' />
             </label>
         </p>
         <p>
