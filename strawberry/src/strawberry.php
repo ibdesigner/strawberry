@@ -92,7 +92,7 @@ class Strawberry {
      * @param: $length of text, text
      * @return: cropped text from begining
      */
-    private function crop_text($length, $excerpt) {
+    private static function crop_text($length, $excerpt) {
         $excerpt = preg_replace(" (\[.*?\])", '', $excerpt);
         $excerpt = strip_shortcodes($excerpt);
         $excerpt = strip_tags($excerpt);
@@ -108,7 +108,7 @@ class Strawberry {
      * @param: $pid (int)
      * @retun: array|false Returns all images as array of arrays with thumb names as keys in second array
      */
-    public function images($pid) {
+    public static function images($pid) {
         $photos = get_children(
                 array(
                     'post_parent' => $pid,
@@ -144,7 +144,7 @@ class Strawberry {
      * @param type $size
      * @return type
      */
-    private function get_image_data($image_id, $size) {
+    private static function get_image_data($image_id, $size) {
         $image_data = wp_get_attachment_image_src($image_id, $size);
         return array(
             'src' => $image_data[0],
