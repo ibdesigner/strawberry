@@ -92,7 +92,7 @@ class Strawberry {
      * @param: $length of text, text
      * @return: cropped text from begining
      */
-    private static function crop_text($length, $excerpt) {
+    public static function crop_text($length, $excerpt) {
         $excerpt = preg_replace(" (\[.*?\])", '', $excerpt);
         $excerpt = strip_shortcodes($excerpt);
         $excerpt = strip_tags($excerpt);
