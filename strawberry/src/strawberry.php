@@ -184,8 +184,9 @@ class Strawberry {
             }
             $x++;
         }
-
-        return $m;
+        if(isset($m)){
+            return $m;
+        }
     }
     
     /**
