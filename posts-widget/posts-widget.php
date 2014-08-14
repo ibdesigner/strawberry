@@ -63,7 +63,8 @@ class Strawberry_posts_widget extends WP_Widget {
             $query_args['order'] = $sort_order;
             $query_args['order_by'] = $sort_by;
             $query_args['post_type'] = $instance["post_type"];
-
+            $query_args['taxonomy'] = true;
+            
             $posts = Strawberry::cache($instance['cache_time'])->posts($query_args);
 
             $params = array(
