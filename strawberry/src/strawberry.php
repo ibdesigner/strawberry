@@ -126,9 +126,14 @@ class Strawberry {
             $x = 0;
             foreach ($photos as $photo) {
 
-                foreach ($image_sizes as $size) {
+                foreach ($image_sizes as $size) {                    
                     $thumb_data = self::get_image_data($photo->ID, $size);
-                    $results[$x][$size] = $thumb_data;
+                    $results[$x]['thumbnails'][$size] = $thumb_data;
+                    
+                    $full_image_src_arr = wp_get_attachment_image_src($photo->ID, 'full');
+                    $results[$x]['full'] = $full_image_src_arr[0]; 
+                    
+                    $results[$x]['permalink'] = get_permalink( $photo->ID ); 
                 }
                 $x++;
             }
