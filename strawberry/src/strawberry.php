@@ -149,7 +149,8 @@ class Strawberry {
         return array(
             'src' => $image_data[0],
             'width' => $image_data[1],
-            'height' => $image_data[2]
+            'height' => $image_data[2],
+            'permalink' => the_attachment_link( $image_id )
         );
     }
 
