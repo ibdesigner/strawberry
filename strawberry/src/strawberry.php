@@ -148,7 +148,7 @@ class Strawberry {
         $image_data = wp_get_attachment_image_src($image_id, $size);
         return array(
             'src' => $image_data[0],
-            'permalink' => the_attachment_link( $image_id ),
+            'permalink' => the_attachment_link( $image_id, true ),
             'width' => $image_data[1],
             'height' => $image_data[2]            
         );
