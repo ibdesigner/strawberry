@@ -130,8 +130,13 @@ class Strawberry {
                     $thumb_data = self::get_image_data($photo->ID, $size);
                     $results[$x]['thumbnails'][$size] = $thumb_data;
                     
-                    $full_image_src_arr = wp_get_attachment_image_src($photo->ID, 'full');
-                    $results[$x]['full'] = $full_image_src_arr[0]; 
+                    $image_content = get_post($photo->ID); 
+                    $results[$x]['src'] = $image_content->guid;
+                    $results[$x]['caption'] = $image_content->post_excerpt;
+                    $results[$x]['description'] = $image_content->post_content;
+                   
+                    $image_meta = self::metas($photo->ID); 
+                    $results[$x]['alt'] = isset($image_meta['_wp_attachment_image_alt']) ? $image_meta['_wp_attachment_image_alt'] : "";
                     
                     $results[$x]['permalink'] = get_permalink( $photo->ID ); 
                 }
