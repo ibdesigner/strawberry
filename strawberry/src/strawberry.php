@@ -29,9 +29,9 @@ class Strawberry {
 
         $cache_key = md5(serialize($args));
 
-        $strawberry_query = get_transient($cache_key);
+        $strawberry_query = StrawberryCache::get($cache_key);
 
-        if (false === $strawberry_query) {
+        if ( false === $strawberry_query ) {
 
             $posts_q = new WP_Query($args);
 
@@ -45,6 +45,11 @@ class Strawberry {
 
             $x = 0;
             $arr = "";
+            
+            if(defined('WP_DEBUG') && WP_DEBUG === true){                
+                echo '<div class="alert alert-info">' . $posts_q->request . '</div>';
+            }
+            
             while ($posts_q->have_posts()) : $posts_q->the_post();
                 $pid = get_the_ID();
                 $content = wpautop(get_the_content($pid));
@@ -66,11 +71,15 @@ class Strawberry {
 
                 $x++;
             endwhile;
+            
             wp_reset_postdata(); 
-            set_transient($cache_key, $arr, self::$cache_time);
+            
+            StrawberryCache::time(self::$cache_time)->set($cache_key, $arr);
+            return StrawberryCache::get($cache_key);
+            
+        } else {
+            return StrawberryCache::get($cache_key);
         }
-
-        return get_transient($cache_key);
     }
 
     public static function cache($seconds) {
