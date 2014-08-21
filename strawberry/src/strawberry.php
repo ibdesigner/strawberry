@@ -84,7 +84,9 @@ class Strawberry {
      */
     public static function single($args) {
         $posts = self::posts($args);
-        return $posts[0];
+        if(count($posts) >= 1){
+            return $posts[0];
+        }
     }
 
     /**
