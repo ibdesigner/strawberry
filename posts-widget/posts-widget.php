@@ -3,6 +3,10 @@ if (!class_exists('Strawberry')) {
     exit('Strawberry class not included');
 }
 
+if (!class_exists('StrawberryCache')) {
+    exit('StrawberryCache class not included');
+}
+
 class Strawberry_posts_widget extends WP_Widget {
 
     private $template_dir;
@@ -25,8 +29,8 @@ class Strawberry_posts_widget extends WP_Widget {
 
         $widget_key = "widget-" . $this->id;
 
-        $strawberry_widget_cache = get_transient($widget_key);
-
+        $strawberry_widget_cache = StrawberryCache::get($widget_key);
+        
         if (false === $strawberry_widget_cache) {
             if (!isset($instance['cache_time']) || $instance['cache_time'] == "") {
                 $instance['cache_time'] = 300;
@@ -72,7 +76,7 @@ class Strawberry_posts_widget extends WP_Widget {
                 'instance' => $instance
             );
 
-            $output = $args['before_widget'];
+            $output = $args['before_widget']; 
             if (!empty($title)) {
                 $output .= $args['before_title'] . $title . $args['after_title'];
             }
@@ -81,10 +85,14 @@ class Strawberry_posts_widget extends WP_Widget {
 
             $output .= $args['after_widget'];                       
 
-            set_transient($widget_key, $output, $instance['cache_time']);
+            StrawberryCache::set($widget_key, $output, $instance['cache_time']);
+            echo StrawberryCache::get($widget_key);
+        } else {
+            echo $strawberry_widget_cache;
         }
         
-        echo get_transient($widget_key);
+        
+        
         if(defined('WP_DEBUG') && WP_DEBUG === true){
             $time = explode(' ', microtime());
             $finish  = $time[1] + $time[0];
