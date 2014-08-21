@@ -18,7 +18,7 @@ class Strawberry {
      *
      * @var INT - default cache time in seconds can be overwritten by cache function 
      */
-    private static $cache_time = 3;
+    private static $cache_time = 30;
 
     /**
      * TODO: Add WP_CACHE into the ecuation. Cache data only if IS DEFINED and set to TRUE
