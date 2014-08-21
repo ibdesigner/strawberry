@@ -33,7 +33,7 @@ class Strawberry_posts_widget extends WP_Widget {
         
         if (false === $strawberry_widget_cache) {
             if (!isset($instance['cache_time']) || $instance['cache_time'] == "") {
-                $instance['cache_time'] = 300;
+                $instance['cache_time'] = 60;
             }
             
             $title = apply_filters('widget_title', $instance['title']);
@@ -85,7 +85,7 @@ class Strawberry_posts_widget extends WP_Widget {
 
             $output .= $args['after_widget'];                       
 
-            StrawberryCache::set($widget_key, $output, $instance['cache_time']);
+            StrawberryCache::time($instance['cache_time'])->set($widget_key, $output);
             echo StrawberryCache::get($widget_key);
         } else {
             echo $strawberry_widget_cache;
