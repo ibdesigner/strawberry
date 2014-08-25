@@ -74,9 +74,9 @@ class Strawberry_manual_posts_widget extends WP_Widget {
         <p>
         <ul class="search-posts-list-selected">
             <?php
-            global $post;
+            if(!empty($manual_post_ids)){
             $myarray = query_posts(array('post_type' => 'any', 'post__in' => $manual_post_ids, 'showposts' => -1, 'orderby' => 'post__in'));
-
+            global $post;
             if (have_posts()) {
                 while (have_posts()) {
                     the_post();
@@ -90,6 +90,7 @@ class Strawberry_manual_posts_widget extends WP_Widget {
                 }
             }
             wp_reset_postdata();
+            }
             ?>
         </ul>			
         </p>
@@ -112,6 +113,33 @@ class Strawberry_manual_posts_widget extends WP_Widget {
                 </select>
             </label>
         </p>
+        
+        <?php if (function_exists('the_post_thumbnail') && current_theme_supports("post-thumbnails")) : ?>
+            <p>
+                <label for="<?php echo $this->get_field_id("thumb"); ?>">
+                    <input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("thumb"); ?>" name="<?php echo $this->get_field_name("thumb"); ?>"<?php checked(isset($instance['thumb']) ? (bool)$instance['thumb'] : false, true); ?> />
+            <?php _e('Show post thumbnail', 'strawberry'); ?>
+                </label>
+            </p>
+            <p>
+                <label>
+                    <?php _e('Thumbnail', 'strawberry'); ?>:<br />
+                    <?php $image_sizes = get_intermediate_image_sizes(); ?>
+                    <select class="widefat" id='<?php echo $this->get_field_id("thumbnail"); ?>' name="<?php echo $this->get_field_name("thumbnail"); ?>">
+                    <?php foreach ($image_sizes as $size_name): ?>
+                            <option <?php selected( isset($instance['thumbnail']) ? $instance['thumbnail'] : "", $size_name); ?> value="<?php echo $size_name ?>"><?php echo $size_name ?></option>
+                    <?php endforeach; ?>
+                    </select>
+                </label>
+            </p>
+      
+            <p>
+                <label for="<?php echo $this->get_field_id("cache_time"); ?>">
+                <?php _e('Cache time (seconds)', 'strawberry'); ?>:<br />
+                        <input class="widefat" type="text" id="<?php echo $this->get_field_id("cache_time"); ?>" name="<?php echo $this->get_field_name("cache_time"); ?>" value="<?php echo isset($instance['cache_time']) ? $instance['cache_time'] : ""; ?>" />
+                </label>
+            </p>
+        <?php endif; ?>
 
         <?php
     }
