@@ -34,12 +34,16 @@ class Strawberry_manual_posts_widget extends WP_Widget {
         if (!isset($instance['template']) || $instance['template'] == "") {
             $instance['template'] = 'default';
         }
+        
+        if (!isset($instance['cache_time']) || $instance['cache_time'] == "") {
+            $instance['cache_time'] = 60;
+        }
 
         $query_args['post__in'] = $instance['articles'];
         $query_args['post_type'] = 'any';
         $query_args['orderby'] = 'post__in';
-
-        $posts = Strawberry::cache(2)->posts($query_args);
+              
+        $posts = Strawberry::cache($instance['cache_time'])->posts($query_args);
 
         $params = array(
             'posts' => $posts,
@@ -66,6 +70,12 @@ class Strawberry_manual_posts_widget extends WP_Widget {
         }
         ?>
         <p>
+            <label for="<?php echo $this->get_field_id("title"); ?>">
+        <?php _e('Title', 'strawberry'); ?>:
+                <input class="widefat" id="<?php echo $this->get_field_id("title"); ?>" name="<?php echo $this->get_field_name("title"); ?>" type="text" value="<?php echo esc_attr(isset($instance['title']) ? $instance['title'] : ""); ?>" />
+            </label>
+        </p>
+        <p>
             <label for="search_posts_input">Search Posts</label>
             <input type="text" id="search_posts_input" name="post_var"/>
             <span class=" search_posts button button-primary right">Search</span>
@@ -74,22 +84,21 @@ class Strawberry_manual_posts_widget extends WP_Widget {
         <p>
         <ul class="search-posts-list-selected">
             <?php
-            if(!empty($manual_post_ids)){
-            $myarray = query_posts(array('post_type' => 'any', 'post__in' => $manual_post_ids, 'showposts' => -1, 'orderby' => 'post__in'));
-            global $post;
-            if (have_posts()) {
-                while (have_posts()) {
-                    the_post();
-                    ?>
-                    <li id="post_<?php echo $post->ID; ?>">
-                        <span class="widget-post-title"><?php the_title(); ?></span>
-                        <input type="hidden" name="<?php echo $this->get_field_name('articles'); ?>[]" value="<?php echo $post->ID; ?>" />
-                        <span class="delete-post button button-default right">delete</span>
-                    </li>
-                    <?php
+            if( !empty( $manual_post_ids ) ){
+                $query_args = array('post_type' => 'any', 'post__in' => $manual_post_ids, 'showposts' => -1, 'orderby' => 'post__in');
+                
+                $articles = Strawberry::cache(1)->posts($query_args);
+                if ( count( $articles ) > 0 ) {
+                    foreach ( $articles as $article ) {                 
+                        ?>
+                        <li id="post_<?php echo $article['ID']; ?>">
+                            <span class="widget-post-title"><?php echo $article['title']; ?></span>
+                            <input type="hidden" name="<?php echo $this->get_field_name('articles'); ?>[]" value="<?php echo $article['ID']; ?>" />
+                            <span class="delete-post button button-default right">delete</span>
+                        </li>
+                        <?php
+                    }
                 }
-            }
-            wp_reset_postdata();
             }
             ?>
         </ul>			
@@ -170,47 +179,40 @@ add_action('widgets_init', function() {
     register_widget('Strawberry_manual_posts_widget');
 });
 
-function load_scripts() {
-    // load our jquery file that sends the $.post request
+if(is_admin()){
+    function load_scripts() {
+            wp_enqueue_style('blank_plugin_template', get_template_directory_uri() . '/libs/strawberry/posts-widget/resources/style.css');
+            wp_enqueue_script('ajax-test', get_template_directory_uri() . '/libs/strawberry/posts-widget/resources/ajax.js', array('jquery'), 'v1.0');
+            wp_localize_script('ajax-test', 'the_ajax_script', array('ajaxurl' => admin_url('admin-ajax.php')));
+        
+    }
 
-    wp_enqueue_style('blank_plugin_template', get_template_directory_uri() . '/libs/strawberry/posts-widget/resources/style.css');
-    wp_enqueue_script('ajax-test', get_template_directory_uri() . '/libs/strawberry/posts-widget/resources/ajax.js', array('jquery'), 'v1.0');
+    add_action('wp_print_scripts', 'load_scripts');
 
-    // make the ajaxurl var available to the above script
-    wp_localize_script('ajax-test', 'the_ajax_script', array('ajaxurl' => admin_url('admin-ajax.php')));
-}
+    add_action('wp_ajax_test_response', 'ajax_process_request');
 
-add_action('wp_print_scripts', 'load_scripts');
+    function ajax_process_request() {
 
-add_action('wp_ajax_test_response', 'ajax_process_request');
-
-function ajax_process_request() {
-    // first check if data is being sent and that it is the data we want
-    global $post;
-
-
-    if (isset($_POST['post_var'])) {
-        $args = array(
-            's' => $_POST['post_var'],
-            'posts_per_page' => 5,
-        );
-        $the_query = new WP_Query($args);
-        if ($the_query->have_posts()) {
-            while ($the_query->have_posts()) {
-                $the_query->the_post();
-                $search_query[] = array(
-                    'post_id' => $post->ID,
-                    'title' => get_the_title()
-                );
+        if ( isset( $_POST['post_var'] ) ) {
+            $args = array(
+                's' => $_POST['post_var'],
+                'posts_per_page' => 5,
+            );
+            $articles = Strawberry::cache(1)->posts($args);
+            if (count( $articles ) > 0) {
+                foreach ($articles as $article) {                   
+                    $search_query[] = array(
+                        'post_id' => $article['ID'],
+                        'title' => $article['title']
+                    );
+                }
+            } else {
+                $search_query = 'no post has found';
             }
-        } else {
-            $search_query = 'no post has found';
-        }
-        /* Restore original Post Data */
-        wp_reset_postdata();
 
-        echo json_encode($search_query);
-        die();
+            echo json_encode($search_query);
+            die();
+        }
     }
 }
 ?>

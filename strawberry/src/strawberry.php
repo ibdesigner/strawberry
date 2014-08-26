@@ -54,6 +54,7 @@ class Strawberry {
                 $pid = get_the_ID();
                 $content = wpautop(get_the_content($pid));
 
+                $arr[$x]['ID']          = $pid;
                 $arr[$x]['title']       = get_the_title($pid);
                 $arr[$x]['content']     = $content;
                 $arr[$x]['excerpt']     = get_the_excerpt();
