@@ -21,8 +21,13 @@ class Strawberry_manual_posts_widget extends WP_Widget {
     }
 
     public function widget($args, $instance) {
-
-        $widget_key = "widget-" . $this->id;
+        
+        if(defined('WP_DEBUG') && WP_DEBUG === true){
+            $time = explode(' ', microtime());
+            $start = $time[1] + $time[0];
+        }   
+        
+        $widget_key = "manual-posts-widget-" . $this->id;
 
         if (!isset($instance['cache_time']) || $instance['cache_time'] == "") {
             $instance['cache_time'] = 60;
@@ -59,6 +64,13 @@ class Strawberry_manual_posts_widget extends WP_Widget {
         $output .= $this->fetch_template($instance['template'], $params);
 
         echo $output .= $args['after_widget'];
+        
+        if(defined('WP_DEBUG') && WP_DEBUG === true){
+            $time = explode(' ', microtime());
+            $finish  = $time[1] + $time[0];
+            $total_time = round(($finish - $start), 4);
+            echo '<div class="alert alert-info">Widget generated in '.$total_time.' seconds.</div>';
+        }
     }
 
     function form($instance) {
