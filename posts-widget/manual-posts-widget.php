@@ -34,7 +34,7 @@ class Strawberry_manual_posts_widget extends WP_Widget {
         if (!isset($instance['template']) || $instance['template'] == "") {
             $instance['template'] = 'default';
         }
-        
+
         if (!isset($instance['cache_time']) || $instance['cache_time'] == "") {
             $instance['cache_time'] = 60;
         }
@@ -42,7 +42,7 @@ class Strawberry_manual_posts_widget extends WP_Widget {
         $query_args['post__in'] = $instance['articles'];
         $query_args['post_type'] = 'any';
         $query_args['orderby'] = 'post__in';
-              
+
         $posts = Strawberry::cache($instance['cache_time'])->posts($query_args);
 
         $params = array(
@@ -58,7 +58,7 @@ class Strawberry_manual_posts_widget extends WP_Widget {
 
         $output .= $this->fetch_template($instance['template'], $params);
 
-        echo $output .= $args['after_widget'];      
+        echo $output .= $args['after_widget'];
     }
 
     function form($instance) {
@@ -71,7 +71,7 @@ class Strawberry_manual_posts_widget extends WP_Widget {
         ?>
         <p>
             <label for="<?php echo $this->get_field_id("title"); ?>">
-        <?php _e('Title', 'strawberry'); ?>:
+                <?php _e('Title', 'strawberry'); ?>:
                 <input class="widefat" id="<?php echo $this->get_field_id("title"); ?>" name="<?php echo $this->get_field_name("title"); ?>" type="text" value="<?php echo esc_attr(isset($instance['title']) ? $instance['title'] : ""); ?>" />
             </label>
         </p>
@@ -84,12 +84,12 @@ class Strawberry_manual_posts_widget extends WP_Widget {
         <p>
         <ul class="search-posts-list-selected">
             <?php
-            if( !empty( $manual_post_ids ) ){
+            if (!empty($manual_post_ids)) {
                 $query_args = array('post_type' => 'any', 'post__in' => $manual_post_ids, 'showposts' => -1, 'orderby' => 'post__in');
-                
+
                 $articles = Strawberry::cache(1)->posts($query_args);
-                if ( count( $articles ) > 0 ) {
-                    foreach ( $articles as $article ) {                 
+                if (count($articles) > 0) {
+                    foreach ($articles as $article) {
                         ?>
                         <li id="post_<?php echo $article['ID']; ?>">
                             <span class="widget-post-title"><?php echo $article['title']; ?></span>
@@ -122,12 +122,12 @@ class Strawberry_manual_posts_widget extends WP_Widget {
                 </select>
             </label>
         </p>
-        
+
         <?php if (function_exists('the_post_thumbnail') && current_theme_supports("post-thumbnails")) : ?>
             <p>
                 <label for="<?php echo $this->get_field_id("thumb"); ?>">
-                    <input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("thumb"); ?>" name="<?php echo $this->get_field_name("thumb"); ?>"<?php checked(isset($instance['thumb']) ? (bool)$instance['thumb'] : false, true); ?> />
-            <?php _e('Show post thumbnail', 'strawberry'); ?>
+                    <input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("thumb"); ?>" name="<?php echo $this->get_field_name("thumb"); ?>"<?php checked(isset($instance['thumb']) ? (bool) $instance['thumb'] : false, true); ?> />
+                    <?php _e('Show post thumbnail', 'strawberry'); ?>
                 </label>
             </p>
             <p>
@@ -135,17 +135,17 @@ class Strawberry_manual_posts_widget extends WP_Widget {
                     <?php _e('Thumbnail', 'strawberry'); ?>:<br />
                     <?php $image_sizes = get_intermediate_image_sizes(); ?>
                     <select class="widefat" id='<?php echo $this->get_field_id("thumbnail"); ?>' name="<?php echo $this->get_field_name("thumbnail"); ?>">
-                    <?php foreach ($image_sizes as $size_name): ?>
-                            <option <?php selected( isset($instance['thumbnail']) ? $instance['thumbnail'] : "", $size_name); ?> value="<?php echo $size_name ?>"><?php echo $size_name ?></option>
-                    <?php endforeach; ?>
+                        <?php foreach ($image_sizes as $size_name): ?>
+                            <option <?php selected(isset($instance['thumbnail']) ? $instance['thumbnail'] : "", $size_name); ?> value="<?php echo $size_name ?>"><?php echo $size_name ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </label>
             </p>
-      
+
             <p>
                 <label for="<?php echo $this->get_field_id("cache_time"); ?>">
-                <?php _e('Cache time (seconds)', 'strawberry'); ?>:<br />
-                        <input class="widefat" type="text" id="<?php echo $this->get_field_id("cache_time"); ?>" name="<?php echo $this->get_field_name("cache_time"); ?>" value="<?php echo isset($instance['cache_time']) ? $instance['cache_time'] : ""; ?>" />
+                    <?php _e('Cache time (seconds)', 'strawberry'); ?>:<br />
+                    <input class="widefat" type="text" id="<?php echo $this->get_field_id("cache_time"); ?>" name="<?php echo $this->get_field_name("cache_time"); ?>" value="<?php echo isset($instance['cache_time']) ? $instance['cache_time'] : ""; ?>" />
                 </label>
             </p>
         <?php endif; ?>
@@ -179,12 +179,12 @@ add_action('widgets_init', function() {
     register_widget('Strawberry_manual_posts_widget');
 });
 
-if(is_admin()){
+if (is_admin()) {
+
     function load_scripts() {
-            wp_enqueue_style('blank_plugin_template', get_template_directory_uri() . '/libs/strawberry/posts-widget/resources/style.css');
-            wp_enqueue_script('ajax-test', get_template_directory_uri() . '/libs/strawberry/posts-widget/resources/ajax.js', array('jquery'), 'v1.0');
-            wp_localize_script('ajax-test', 'the_ajax_script', array('ajaxurl' => admin_url('admin-ajax.php')));
-        
+        wp_enqueue_style('blank_plugin_template', get_template_directory_uri() . '/libs/strawberry/posts-widget/resources/style.css');
+        wp_enqueue_script('ajax-test', get_template_directory_uri() . '/libs/strawberry/posts-widget/resources/ajax.js', array('jquery'), 'v1.0');
+        wp_localize_script('ajax-test', 'the_ajax_script', array('ajaxurl' => admin_url('admin-ajax.php')));
     }
 
     add_action('wp_print_scripts', 'load_scripts');
@@ -193,14 +193,14 @@ if(is_admin()){
 
     function ajax_process_request() {
 
-        if ( isset( $_POST['post_var'] ) ) {
+        if (isset($_POST['post_var'])) {
             $args = array(
                 's' => $_POST['post_var'],
                 'posts_per_page' => 5,
             );
             $articles = Strawberry::cache(1)->posts($args);
-            if (count( $articles ) > 0) {
-                foreach ($articles as $article) {                   
+            if (count($articles) > 0) {
+                foreach ($articles as $article) {
                     $search_query[] = array(
                         'post_id' => $article['ID'],
                         'title' => $article['title']
@@ -214,5 +214,6 @@ if(is_admin()){
             die();
         }
     }
+
 }
 ?>
