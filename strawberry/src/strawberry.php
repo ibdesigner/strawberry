@@ -78,7 +78,7 @@ class Strawberry {
             return StrawberryCache::get($cache_key);
             
         } else {
-            return StrawberryCache::get($cache_key);
+            return $strawberry_query;
         }
     }
 
