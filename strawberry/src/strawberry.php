@@ -59,7 +59,7 @@ class Strawberry {
                 $arr[$x]['content']     = $content;
                 $arr[$x]['excerpt']     = get_the_excerpt();
                 $arr[$x]['content_excerpt'] = self::crop_text($args['excerpt_length'], $content);
-                $arr[$x]['images']      = self::images($pid);
+                //$arr[$x]['images']      = self::images($pid);
                 $arr[$x]['thumb']       = self::feature_image($pid, false);
                 $arr[$x]['permalink']   = get_permalink($pid);
                 $arr[$x]['meta']        = self::metas($pid);
@@ -216,23 +216,26 @@ class Strawberry {
      * @param INT $pid
      * @return ARRAY
      */
-    public static function terms($pid){
+     public static function terms($pid) {
         $taxonomies = self::public_taxonomies();
-        
-        foreach($taxonomies as $taxonomy){
-            $post_terms = wp_get_post_terms($pid, $taxonomy);
-            $x=0;
-            $post_terms_array = array();
-            foreach($post_terms as $post_term){
-                $post_terms_array[$x]['term_id'] = $post_term->term_id;
-                $post_terms_array[$x]['name'] = $post_term->name;
-                $post_terms_array[$x]['url'] =  get_term_link($post_term);              
-                $x++;
-            }
-            
-            $terms[$taxonomy] = $post_terms_array;
+
+
+        $post_terms = wp_get_post_terms($pid, $taxonomies);
+        $x = 0;
+        $post_terms_array = array();
+
+        foreach ($post_terms as $post_term) {
+            $post_terms_array[$x][$post_term->taxonomy]['term_id'] = $post_term->term_id;
+            $post_terms_array[$x][$post_term->taxonomy]['name'] = $post_term->name;
+            $post_terms_array[$x][$post_term->taxonomy]['url'] = get_term_link($post_term);
+            $x++;
         }
-        
+
+        foreach ($post_terms_array as $terms_array) {
+            foreach ($terms_array as $key => $value) {
+                $terms[$key][] = $value;
+            }
+        }
         return $terms;
     }
 
