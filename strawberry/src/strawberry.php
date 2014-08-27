@@ -231,12 +231,14 @@ class Strawberry {
             $x++;
         }
 
-        foreach ($post_terms_array as $terms_array) {
-            foreach ($terms_array as $key => $value) {
-                $terms[$key][] = $value;
+        if(!empty($post_terms_array)){
+            foreach ($post_terms_array as $terms_array) {
+                foreach ($terms_array as $key => $value) {
+                    $terms[$key][] = $value;
+                }
             }
+            return $terms;
         }
-        return $terms;
     }
 
     /**
