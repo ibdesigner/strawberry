@@ -76,7 +76,7 @@ class Strawberry {
             wp_reset_postdata(); 
             
             StrawberryCache::time(self::$cache_time)->set($cache_key, $arr);
-            return StrawberryCache::get($cache_key);
+            return $arr;
             
         } else {
             return $strawberry_query;
