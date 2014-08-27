@@ -31,7 +31,7 @@ class Strawberry {
 
         $strawberry_query = StrawberryCache::get($cache_key);
 
-        if ( false === $strawberry_query ) {
+        if (false === $strawberry_query) {
 
             $posts_q = new WP_Query($args);
 
@@ -45,39 +45,38 @@ class Strawberry {
 
             $x = 0;
             $arr = "";
-            
-            if(defined('WP_DEBUG') && WP_DEBUG === true){                
+
+            if (defined('WP_DEBUG') && WP_DEBUG === true) {
                 echo '<div class="alert alert-info">' . $posts_q->request . '</div>';
             }
-            
+
             while ($posts_q->have_posts()) : $posts_q->the_post();
                 $pid = get_the_ID();
                 $content = wpautop(get_the_content($pid));
 
-                $arr[$x]['ID']          = $pid;
-                $arr[$x]['title']       = get_the_title($pid);
-                $arr[$x]['content']     = $content;
-                $arr[$x]['excerpt']     = get_the_excerpt();
+                $arr[$x]['ID'] = $pid;
+                $arr[$x]['title'] = get_the_title($pid);
+                $arr[$x]['content'] = $content;
+                $arr[$x]['excerpt'] = get_the_excerpt();
                 $arr[$x]['content_excerpt'] = self::crop_text($args['excerpt_length'], $content);
                 //$arr[$x]['images']      = self::images($pid);
-                $arr[$x]['thumb']       = self::feature_image($pid, false);
-                $arr[$x]['permalink']   = get_permalink($pid);
-                $arr[$x]['meta']        = self::metas($pid);
-                $arr[$x]['author']      = array( 'name' => get_the_author(), 'permalink' => get_the_author_link() );
-                $arr[$x]['date']        = strtotime(get_the_date('Y-m-d H:i:s'));
-                
-                if(isset($args['taxonomy']) && $args['taxonomy'] === true){
+                $arr[$x]['thumb'] = self::feature_image($pid, false);
+                $arr[$x]['permalink'] = get_permalink($pid);
+                $arr[$x]['meta'] = self::metas($pid);
+                $arr[$x]['author'] = array('name' => get_the_author(), 'permalink' => get_the_author_link());
+                $arr[$x]['date'] = strtotime(get_the_date('Y-m-d H:i:s'));
+
+                if (isset($args['taxonomy']) && $args['taxonomy'] === true) {
                     $arr[$x]['terms'] = self::terms($pid);
                 }
 
                 $x++;
             endwhile;
-            
-            wp_reset_postdata(); 
-            
+
+            wp_reset_postdata();
+
             StrawberryCache::time(self::$cache_time)->set($cache_key, $arr);
             return $arr;
-            
         } else {
             return $strawberry_query;
         }
@@ -94,7 +93,7 @@ class Strawberry {
      */
     public static function single($args) {
         $posts = self::posts($args);
-        if(count($posts) >= 1){
+        if (count($posts) >= 1) {
             return $posts[0];
         }
     }
@@ -138,19 +137,19 @@ class Strawberry {
             $x = 0;
             foreach ($photos as $photo) {
 
-                foreach ($image_sizes as $size) {                    
+                foreach ($image_sizes as $size) {
                     $thumb_data = self::get_image_data($photo->ID, $size);
                     $results[$x]['thumbnails'][$size] = $thumb_data;
-                    
-                    $image_content = get_post($photo->ID); 
+
+                    $image_content = get_post($photo->ID);
                     $results[$x]['src'] = $image_content->guid;
                     $results[$x]['caption'] = $image_content->post_excerpt;
                     $results[$x]['description'] = $image_content->post_content;
-                   
-                    $image_meta = self::metas($photo->ID); 
+
+                    $image_meta = self::metas($photo->ID);
                     $results[$x]['alt'] = isset($image_meta['_wp_attachment_image_alt']) ? $image_meta['_wp_attachment_image_alt'] : "";
-                    
-                    $results[$x]['permalink'] = get_permalink( $photo->ID ); 
+
+                    $results[$x]['permalink'] = get_permalink($photo->ID);
                 }
                 $x++;
             }
@@ -206,17 +205,17 @@ class Strawberry {
             }
             $x++;
         }
-        if(isset($m)){
+        if (isset($m)) {
             return $m;
         }
     }
-    
+
     /**
      * 
      * @param INT $pid
      * @return ARRAY
      */
-     public static function terms($pid) {
+    public static function terms($pid) {
         $taxonomies = self::public_taxonomies();
 
 
@@ -231,7 +230,7 @@ class Strawberry {
             $x++;
         }
 
-        if(!empty($post_terms_array)){
+        if (!empty($post_terms_array)) {
             foreach ($post_terms_array as $terms_array) {
                 foreach ($terms_array as $key => $value) {
                     $terms[$key][] = $value;
