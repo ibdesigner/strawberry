@@ -3,9 +3,6 @@ if (!class_exists('Strawberry')) {
     exit('Strawberry class not included');
 }
 
-if (!class_exists('StrawberryCache')) {
-    exit('StrawberryCache class not included');
-}
 
 class Strawberry_manual_posts_widget extends WP_Widget {
 
