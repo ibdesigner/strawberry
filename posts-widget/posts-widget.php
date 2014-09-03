@@ -60,17 +60,16 @@ class Strawberry_posts_widget extends WP_Widget {
         $query_args['order_by'] = $sort_by;
         $query_args['post_type'] = $instance["post_type"];
         $query_args['taxonomy'] = true;
-        
-        if( isset($instance["post_format"]) && $instance["post_format"] != 0 ){
-    
-            $query_args['tax_query'] = array (
-                                            array (
-                                                'taxonomy' => 'post_format',
-                                                'field' => 'slug',
-                                                'terms' => $instance["post_format"],
-                                            )
-                                        );
-        } 
+
+        if (isset($instance["post_format"]) && $instance["post_format"] != 0) {
+            $query_args['tax_query'] = array(
+                array(
+                    'taxonomy' => 'post_format',
+                    'field' => 'slug',
+                    'terms' => "post-format-" . $instance["post_format"],
+                )
+            );
+        }
 
         $posts = Strawberry::cache($instance['cache_time'])->posts($query_args);
 
@@ -102,13 +101,12 @@ class Strawberry_posts_widget extends WP_Widget {
 
     function form($instance) {
 
-        if ( current_theme_supports( 'post-formats' ) ) {
-            $post_formats = get_theme_support( 'post-formats' );
-            if ( is_array( $post_formats[0] ) ) {
-                $formats = $post_formats[0] ;              
+        if (current_theme_supports('post-formats')) {
+            $post_formats = get_theme_support('post-formats');
+            if (is_array($post_formats[0])) {
+                $formats = $post_formats[0];
             }
         }
-        
         ?>
         <p>
             <label for="<?php echo $this->get_field_id("title"); ?>">
@@ -133,18 +131,18 @@ class Strawberry_posts_widget extends WP_Widget {
                 </select>
             </label>
         </p>
-        <?php if($formats): ?>
-        <p>
-            <label>
-                <?php _e('Post Format', 'strawberry'); ?>:
-                <select class="widefat" id="<?php echo $this->get_field_id("post_format"); ?>"  name='<?php echo $this->get_field_name("post_format"); ?>'>
-                    <option <?php selected(isset($instance['post_format']) ? $instance['post_format'] : "", 0); ?> value="0">Standard</option>
-                    <?php foreach ($formats as $format) { ?>
-                        <option <?php selected(isset($instance['post_format']) ? $instance['post_format'] : "", $format); ?> value="<?php echo $format; ?>"><?php echo ucfirst($format); ?></option>
-                    <?php } ?>
-                </select>
-            </label>
-        </p>
+        <?php if ($formats): ?>
+            <p>
+                <label>
+                    <?php _e('Post Format', 'strawberry'); ?>:
+                    <select class="widefat" id="<?php echo $this->get_field_id("post_format"); ?>"  name='<?php echo $this->get_field_name("post_format"); ?>'>
+                        <option <?php selected(isset($instance['post_format']) ? $instance['post_format'] : "", 0); ?> value="0">Standard</option>
+                        <?php foreach ($formats as $format) { ?>
+                            <option <?php selected(isset($instance['post_format']) ? $instance['post_format'] : "", $format); ?> value="<?php echo $format; ?>"><?php echo ucfirst($format); ?></option>
+                        <?php } ?>
+                    </select>
+                </label>
+            </p>
         <?php endif; ?>
         <p>
             <label for="<?php echo $this->get_field_id("num"); ?>">
