@@ -62,7 +62,7 @@ class Strawberry_posts_widget extends WP_Widget {
         $query_args['taxonomy'] = true;
         
         if( isset($instance["post_format"]) && $instance["post_format"] != 0 ){
-            echo $instance["post_format"];
+    
             $query_args['tax_query'] = array (
                                             array (
                                                 'taxonomy' => 'post_format',
