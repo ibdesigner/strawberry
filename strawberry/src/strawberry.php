@@ -150,6 +150,7 @@ class Strawberry {
                     $results[$x]['alt'] = isset($image_meta['_wp_attachment_image_alt']) ? $image_meta['_wp_attachment_image_alt'] : "";
 
                     $results[$x]['permalink'] = get_permalink($photo->ID);
+                    $results[$x]['ID'] = $photo->ID;
                 }
                 $x++;
             }

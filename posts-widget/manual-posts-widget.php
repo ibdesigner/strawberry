@@ -42,7 +42,7 @@ class Strawberry_manual_posts_widget extends WP_Widget {
         }
 
         $query_args['post__in'] = $instance['articles'];
-        $query_args['post_type'] = 'any';
+        $query_args['post_type'] = 'post'; 
         $query_args['orderby'] = 'post__in';
 
         $posts = Strawberry::cache($instance['cache_time'])->posts($query_args);

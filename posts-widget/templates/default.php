@@ -1,3 +1,4 @@
+<?php global $exclude_ids; ?>
 <?php foreach($posts as $post): ?>
 <div class="row article">
     <div class="col-md-12">
@@ -15,4 +16,4 @@
         <?php endif;?>
     </div>
 </div>
-<?php endforeach; ?>
+<?php $exclude_ids[] = $post['ID'];  endforeach; ?>

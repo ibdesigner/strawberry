@@ -60,6 +60,12 @@ class Strawberry_posts_widget extends WP_Widget {
         $query_args['order_by'] = $sort_by;
         $query_args['post_type'] = $instance["post_type"];
         $query_args['taxonomy'] = true;
+        
+        global $exclude_ids;
+        
+        if(is_array($exclude_ids) && !empty($exclude_ids)){
+            $query_args['post__not_in'] = $exclude_ids;
+        }
 
         if (isset($instance["post_format"]) && $instance["post_format"] != 0) {
             $query_args['tax_query'] = array(
