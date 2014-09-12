@@ -67,7 +67,7 @@ class Strawberry_posts_widget extends WP_Widget {
             $query_args['post__not_in'] = $exclude_ids;
         }
 
-        if (isset($instance["post_format"]) && $instance["post_format"] != 0) {
+        if (isset($instance["post_format"]) && $instance["post_format"] != '0') {
             $query_args['tax_query'] = array(
                 array(
                     'taxonomy' => 'post_format',
