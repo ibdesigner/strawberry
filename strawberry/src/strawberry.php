@@ -188,6 +188,12 @@ class Strawberry {
 
         return $thumb;
     }
+    
+    
+    public static function single_feature_image($pid, $size) {
+        $thumb = self::get_image_data(get_post_thumbnail_id($pid), $size, false, '');
+        return $thumb;
+    }
 
     /**
      * 
