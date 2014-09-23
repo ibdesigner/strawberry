@@ -60,11 +60,12 @@ class Strawberry_posts_widget extends WP_Widget {
         $query_args['order_by'] = $sort_by;
         $query_args['post_type'] = $instance["post_type"];
         $query_args['taxonomy'] = true;
-        
-        global $exclude_ids;
-        
-        if(is_array($exclude_ids) && !empty($exclude_ids)){
-            $query_args['post__not_in'] = $exclude_ids;
+               
+        if(isset($instance['exclude_posts']) && $instance['exclude_posts'] === 'on'){        
+            global $exclude_ids;
+            if(is_array($exclude_ids) && !empty($exclude_ids)){
+                $query_args['post__not_in'] = $exclude_ids;
+            }
         }
 
         if (isset($instance["post_format"]) && $instance["post_format"] != '0') {
@@ -246,6 +247,12 @@ class Strawberry_posts_widget extends WP_Widget {
                 <label for="<?php echo $this->get_field_id("cache_time"); ?>">
                     <?php _e('Cache time (seconds)', 'strawberry'); ?>:<br />
                     <input class="widefat" type="text" id="<?php echo $this->get_field_id("cache_time"); ?>" name="<?php echo $this->get_field_name("cache_time"); ?>" value="<?php echo isset($instance['cache_time']) ? $instance['cache_time'] : ""; ?>" />
+                </label>
+            </p>
+            <p>
+                <label for="<?php echo $this->get_field_id("exclude_posts"); ?>">
+                    <input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("exclude_posts"); ?>" name="<?php echo $this->get_field_name("exclude_posts"); ?>" <?php checked(isset($instance['exclude_posts']) ? (bool) $instance['exclude_posts'] : true, true); ?> />
+                    <?php _e('Exclude previous posts in page', 'strawberry'); ?>
                 </label>
             </p>
         <?php endif; ?>
