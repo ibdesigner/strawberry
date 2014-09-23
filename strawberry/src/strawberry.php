@@ -193,7 +193,7 @@ class Strawberry {
     }
     
     
-    public static function single_feature_image($pid, $size) {
+    public static function thumb($pid, $size = "thumbnail") {
         $thumb = self::get_image_data(get_post_thumbnail_id($pid), $size, false, '');
         return $thumb['src'];
     }
