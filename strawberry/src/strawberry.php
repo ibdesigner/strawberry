@@ -60,7 +60,7 @@ class Strawberry {
                 $arr[$x]['excerpt'] = get_the_excerpt();
                 $arr[$x]['content_excerpt'] = self::crop_text($args['excerpt_length'], $content);
                 //$arr[$x]['images']      = self::images($pid);
-                $arr[$x]['thumb'] = self::feature_image($pid, false);
+                //$arr[$x]['thumb'] = self::feature_image($pid, false);
                 $arr[$x]['permalink'] = get_permalink($pid);
                 $arr[$x]['meta'] = self::metas($pid);
                 $arr[$x]['author'] = array('name' => get_the_author(), 'permalink' => get_the_author_link());
