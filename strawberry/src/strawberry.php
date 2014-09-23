@@ -180,12 +180,15 @@ class Strawberry {
      * @param type $pid
      * @return type
      */
-    public static function feature_image($pid) {
-        $image_sizes = get_intermediate_image_sizes();
-        foreach ($image_sizes as $size) {
-            $thumb[$size] = self::get_image_data(get_post_thumbnail_id($pid), $size, false, '');
+    public static function feature_image($pid, $size = null) {
+        if(!is_null($size)){
+            $image_sizes = get_intermediate_image_sizes();
+            foreach ($image_sizes as $size) {
+                $thumb[$size] = self::get_image_data(get_post_thumbnail_id($pid), $size, false, '');
+            }
+        } else {
+             $thumb = self::get_image_data(get_post_thumbnail_id($pid), $size, false, '');
         }
-
         return $thumb;
     }
 
