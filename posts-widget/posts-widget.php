@@ -251,7 +251,7 @@ class Strawberry_posts_widget extends WP_Widget {
             </p>
             <p>
                 <label for="<?php echo $this->get_field_id("exclude_posts"); ?>">
-                    <input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("exclude_posts"); ?>" name="<?php echo $this->get_field_name("exclude_posts"); ?>" <?php checked(isset($instance['exclude_posts']) ? (bool) $instance['exclude_posts'] : true, true); ?> />
+                    <input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("exclude_posts"); ?>" name="<?php echo $this->get_field_name("exclude_posts"); ?>" <?php checked(isset($instance['exclude_posts']) ? (bool) $instance['exclude_posts'] : true, false); ?> />
                     <?php _e('Exclude previous posts in page', 'strawberry'); ?>
                 </label>
             </p>
