@@ -3,6 +3,7 @@ if (!class_exists('Strawberry')) {
     exit('Strawberry class not included');
 }
 
+
 class Strawberry_manual_posts_widget extends WP_Widget {
 
     private $template_dir;
@@ -17,12 +18,12 @@ class Strawberry_manual_posts_widget extends WP_Widget {
     }
 
     public function widget($args, $instance) {
-
-        if (defined('WP_DEBUG') && WP_DEBUG === true) {
+        
+        if(defined('WP_DEBUG') && WP_DEBUG === true){
             $time = explode(' ', microtime());
             $start = $time[1] + $time[0];
-        }
-
+        }   
+        
         $widget_key = "manual-posts-widget-" . $this->id;
 
         if (!isset($instance['cache_time']) || $instance['cache_time'] == "") {
@@ -39,35 +40,42 @@ class Strawberry_manual_posts_widget extends WP_Widget {
         if (!isset($instance['cache_time']) || $instance['cache_time'] == "") {
             $instance['cache_time'] = 60;
         }
+        
+        if(isset($instance['articles']) && !empty($instance['articles'])){
 
-        if (isset($instance['articles']) && !empty($instance['articles'])) {
-            $query_args['post__in'] = $instance['articles'];
-            $query_args['post_type'] = 'post';
-            $query_args['orderby'] = 'post__in';
+        $query_args['post__in'] = $instance['articles'];
+        $query_args['post_type'] = 'post'; 
+        $query_args['orderby'] = 'post__in';
+        $query_args['taxonomy'] = true;
+        $query_args['ignore_sticky_posts'] = 1;
+        $query_args['posts_per_page'] = count($instance['articles']);
 
-            $posts = Strawberry::cache($instance['cache_time'])->posts($query_args);
+        $posts = Strawberry::cache($instance['cache_time'])->posts($query_args);
+        
+        $params = array(
+            'posts' => $posts,
+            'instance' => $instance
+        );
 
-            $params = array(
-                'posts' => $posts,
-                'instance' => $instance
-            );
+        $output = $args['before_widget'];
 
-            $output = $args['before_widget'];
-
-            if (!empty($title)) {
-                $output .= $args['before_title'] . $title . $args['after_title'];
-            }
-
-            $output .= $this->fetch_template($instance['template'], $params);
-
-            echo $output .= $args['after_widget'];
+        if (!empty($title)) {
+            $output .= $args['before_title'] . $title . $args['after_title'];
         }
-        if (defined('WP_DEBUG') && WP_DEBUG === true) {
+
+        $output .= $this->fetch_template($instance['template'], $params);
+
+        echo $output .= $args['after_widget'];
+        }
+        
+        if(defined('WP_DEBUG') && WP_DEBUG === true){
             $time = explode(' ', microtime());
-            $finish = $time[1] + $time[0];
+            $finish  = $time[1] + $time[0];
             $total_time = round(($finish - $start), 4);
-            echo '<div class="alert alert-info">Widget generated in ' . $total_time . ' seconds.</div>';
+            echo '<div class="alert alert-info">Widget generated in '.$total_time.' seconds.</div>';
         }
+        
+        
     }
 
     function form($instance) {
