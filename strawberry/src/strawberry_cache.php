@@ -8,22 +8,17 @@ class StrawberryCache {
     public static function set($key, $value) {
         if (self::has_memcached() === true) {
             self::$memcache->set($key, $value, 0, self::$time);
-        } else {
-            set_transient($key, $value, self::$time);
         }
     }
 
     public static function get($key) {
+        $cache_data = false;
         if (self::has_memcached() === true) {
             $cache_data = self::$memcache->get($key);
-        } else {
-            $cache_data = get_transient($key);
-        }
+        } 
 
         if ($cache_data === false) {
             return false;
-        } else {
-            return $cache_data;
         }
     }
 
